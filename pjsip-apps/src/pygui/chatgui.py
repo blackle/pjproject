@@ -122,6 +122,8 @@ class AudioObserver:
         pass
     def onTxMute(self, peer_uri, is_muted):
         pass
+    def onDTMFButton(self, btn):
+        pass
 
 
 class AudioFrame(ttk.Labelframe):
@@ -209,6 +211,9 @@ class AudioFrame(ttk.Labelframe):
         self._observer.onTxMute(self.peerUri, self._txMute)
         self.btnTxMute['text'] = 'Unmute' if self._txMute else 'Mute'
 
+    def _onDTMFButton(self, btn):
+        self._observer.onDTMFButton(btn)
+
     def _createInitWidgets(self):
         self._initFrame = ttk.Frame(self)
         #self._initFrame.pack(fill=tk.BOTH)
@@ -254,6 +259,22 @@ class AudioFrame(ttk.Labelframe):
 
         self.btnTxMute = ttk.Button(self.txVolFrm, width=8, text='Mute', command=self._onTxMute)
         self.btnTxMute.pack(side=tk.LEFT)
+
+        self.dtmfFrame = ttk.Frame(self._callFrame)
+        self.dtmfBtns = []
+        for num in range(12):
+            numStr = str(num+1)
+            if num == 9:
+                numStr = '*'
+            if num == 10:
+                numStr = '0'
+            if num == 11:
+                numStr = '#'
+
+            dtmfBtn = ttk.Button(self.dtmfFrame, width=8, text=numStr, command=lambda numStr=numStr:self._onDTMFButton(numStr))
+            dtmfBtn.grid(row=num//3, column=num%3)
+            self.dtmfBtns.append(dtmfBtn)
+        self.dtmfFrame.pack(fill=tk.BOTH, expand=1)
 
         # stat
         self.stat = tk.Text(self._callFrame, width=10, height=2, bg='lightgray', relief=tk.FLAT, font=("Courier", "9"))

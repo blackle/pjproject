@@ -207,6 +207,7 @@ class Chat(gui.ChatObserver):
         # it is a temporary one and not really registered to acc
         bud = None
         try:
+            raise Exception("hello")
             bud = self._acc.findBuddy2(uri_str)
         except:
             bud = buddy.Buddy(None)
@@ -442,6 +443,13 @@ class Chat(gui.ChatObserver):
         else:
             ep.Endpoint.instance.audDevManager().getCaptureDevMedia().startTransmit(am)
             self.addMessage(None, "Unmuted audio to '%s'" % (peer_uri_str))
+
+    def onDTMFButton(self, btn):
+        # prm = pj.CallSendDtmfParam()
+        # prm.digit = btn
+        # prm.method = pj.PJSUA_DTMF_METHOD_SIP_INFO
+        for c in self._callList:
+            c.dialDtmf(btn)
 
     # Chat room
     def onAddParticipant(self):
